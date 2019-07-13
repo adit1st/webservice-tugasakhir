@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+	<div id="app" class="container mt-3">
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+				<div v-if="form">
+					<div>
+						<div class="form-group row">
+							<label for="nim">NIM</label>
+							<input type="text" id="nim" name="nim" class="form-control">
+						</div>
+						<div class="form-group row">
+							<label for="nama_mahasiswa">Nama Mahasiswa</label>
+							<input type="text" id="nama_mahasiswa" name="nama_mahasiswa" class="form-control">
+						</div>
+						<div class="form-group row">
+							<label for="alamat_mahasiswa">Alamat Mahasiswa</label>
+							<input type="text" id="alamat_mahasiswa" name="alamat_mahasiswa" class="form-control">
+						</div>
+						<div class="from-group row">
+							<button class="btn btn-primary" type="submit" name="simpan" v-on:click="simpan()">
+								Simpan
+							</button>
+
+							<button class="btn btn-danger ml-2" v-on:click="form = !form">
+								Kembali
+							</button>
+						</div>
+					</div>
+				</div>
+				<div v-if="!form">
+					<button class="btn btn-primary" v-on:click="form = !form">
+						Tambah Data
+					</button>
+
+					<h4 class="mt-3">Data Produk</h4>
+
+					<table class="table table-striped">
+						<tr>
+							<th>ID</th>
+							<th>NIM</th>
+							<th>Nama Mahasiswa</th>
+							<th>Alamat Mahasiswa</th>
+							<th>Aksi</th>
+						</tr>
+						<tr v-for="item in items">
+							<td>{{item.id}}</td>
+							<td>{{item.nim}}</td>
+							<td>{{item.nama_mahasiswa}}</td>
+							<td>{{item.alamat_mahasiswa}}</td>
+							<td></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="js/vue.js"></script>
+	<script src="js/axios.min.js"></script>
+	<script>
+		var example1 = new Vue({
+			el: '#app',
+			data: {
+				items: [],
+				form: false
+			},
+			mounted(){
+				this.fetchProduks()
+			},
+			methods: {
+				fetchProduks(){
+					var s = this;
+					axios.get('http://localhost:8000/api/mahasiswa').then(function(response){
+						console.log(response.data)
+						s.items = response.data
+					})
+					.catch(function(error){
+						console.log(error)
+					})
+				},
+				simpan() {
+					var i_nim = document.getElementById("nim").value
+					var i_nama_mahasiswa = document.getElementById("nama_mahasiswa").value
+					var i_alamat_mahasiswa = document.getElementById("alamat_mahasiswa").value
+					
+
+					var s = this;
+					axios.post("http://localhost:8000/api/mahasiswa", {
+						nim: i_nim,
+						nama_mahasiswa: i_nama_mahasiswa,
+						alamat_mahasiswa: i_alamat_mahasiswa,
+					
+					})
+					.then(function(response){
+						console.log(response);
+						if (response.data.status == true){
+							s.form = !s.form
+							s.fetchProduks();
+						} else {
+							alert("data gagal disimpan")
+						}
+					})
+					.then(function(error){
+						console.log(error);
+					})
+				}
+			}
+		})
+	</script>
+
+</body>
+</html>
