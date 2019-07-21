@@ -48,6 +48,8 @@ class MatakuliahController extends Controller
                 'message' => 'data gagal disimpan'
             );
         }
+        return response()->json($res);
+    }
 
     /**
      * Display the specified resource.

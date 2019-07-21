@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Dosen</title>
+	<link rel="stylesheet" href="css/app.css">
+	<link rel="stylesheet" href="fontawesome/css/fontawesome.min.css">
+	<link rel="stylesheet" href="fontawesome/css/solid.min.css">
+</head>
+
+<style>
+	body{
+		background: url('img/bg.jpg');
+		background-repeat: no-repeat;
+		background-size: 100%;
+		position: relative;
+	}
+</style>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container">
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="navbar-nav">
+					<a class="nav-item nav-link ml-5" href="beranda.html"><i class="fas fa-home"></i> Beranda<span class="sr-only">(current)</span></a>
+					<a class="nav-item nav-link ml-5" href="mahasiswa.html"><i class="fas fa-user-graduate"></i> Mahasiswa</a>
+					<a class="nav-item nav-link ml-5 active" href="dosen.html"><i class="fas fa-chalkboard-teacher"></i> Dosen</a>
+					<a class="nav-item nav-link ml-5" href="matakuliah.html"><i class="fas fa-book"></i> Matakuliah</a>
+				</div>
+			</div>
+		</div>
+	</nav> 
+
+	<div id="app" class="container mt-4">
+		<div class="row">
+			<div class="col-md-10 offset-md-1">
+
+				<div v-if="form">
+
+					<div class="card" style="opacity: 0.95;">
+						<h5 class="card-header">Tambah Data Dosen</h5>
+						<div class="card-body">
+							
+							<div class="form-group">
+								<label for="nik">NIK</label>
+								<input type="text" id="nik" name="nik" class="form-control">
+							</div>
+							<div class="form-group">
+								<label for="nama_dosen">Nama</label>
+								<input type="text" id="nama_dosen" name="nama_dosen" class="form-control">
+							</div>
+							<div class="form-group">
+								<label for="alamat_dosen">Alamat</label>
+								<input type="text" id="alamat_dosen" name="alamat_dosen" class="form-control">
+							</div>
+							<div class="from-group">
+								<button class="btn btn-primary" type="submit" name="simpan" v-on:click="simpan()"><i class="fas fa-save"></i>
+									Simpan
+								</button>
+
+								<button class="btn btn-danger" v-on:click="form = !form">
+									<i class="fas fa-backward"></i> Kembali
+								</button>
+							</div>
+							
+						</div>
+					</div>
+					
+				</div>
+				<div v-if="!form">
+
+					<div class="card" style="opacity: 0.95;">
+						<h5 class="card-header">Data Dosen</h5>
+						<div class="card-body">
+							<button class="btn btn-primary" v-on:click="form = !form">
+								<i class="fas fa-plus-circle"></i> Tambah Data
+							</button>
+							<table class="table table-striped mt-3">
+								<tr>
+									<th>ID</th>
+									<th>NIK</th>
+									<th>Nama</th>
+									<th>Alamat</th>
+									<th>Aksi</th>
+								</tr>
+								<tr v-for="item in items">
+									<td>{{item.id}}</td>
+									<td>{{item.nik}}</td>
+									<td>{{item.nama_dosen}}</td>
+									<td>{{item.alamat_dosen}}</td>
+									<td></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+						
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/vue.js"></script>
+	<script src="js/axios.min.js"></script>
+	<script>
+		var example1 = new Vue({
+			el: '#app',
+			data: {
+				items: [],
+				form: false
+			},
+			mounted(){
+				this.fetchProduks()
+			},
+			methods: {
+				fetchProduks(){
+					var s = this;
+					axios.get('http://localhost:8000/api/dosen').then(function(response){
+						console.log(response.data)
+						s.items = response.data
+					})
+					.catch(function(error){
+						console.log(error)
+					})
+				},
+				simpan() {
+					var i_nik = document.getElementById("nik").value
+					var i_nama_dosen = document.getElementById("nama_dosen").value
+					var i_alamat_dosen = document.getElementById("alamat_dosen").value
+					
+
+					var s = this;
+					axios.post("http://localhost:8000/api/dosen", {
+						nik: i_nik,
+						nama_dosen: i_nama_dosen,
+						alamat_dosen: i_alamat_dosen,
+
+					})
+					.then(function(response){
+						console.log(response);
+						if (response.data.status == true){
+							s.form = !s.form
+							s.fetchProduks();
+						} else {
+							alert("data gagal disimpan")
+						}
+					})
+					.then(function(error){
+						console.log(error);
+					})
+				}
+			}
+		})
+	</script>
+
+</body>
+</html>

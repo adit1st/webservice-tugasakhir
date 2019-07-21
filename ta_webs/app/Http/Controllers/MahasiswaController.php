@@ -93,6 +93,8 @@ class MahasiswaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = mahasiswa::find($id);
+        $data->delete();
+        return $data;
     }
 }
