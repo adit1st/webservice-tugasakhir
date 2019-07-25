@@ -35,12 +35,12 @@
 		<div class="row">
 			<div class="col-md-10 offset-md-1">
 
-				<div v-if="form">
+				<div v-if="form === 'tambah'"> 
 
 					<div class="card" style="opacity: 0.95;">
 						<h5 class="card-header">Tambah Data Mahasiswa</h5>
 						<div class="card-body">
-							<form @submit.prevent="addItem">
+							
 							<div class="form-group">
 								<label for="nim">NIM</label>
 								<input type="text" id="nim" name="nim" class="form-control">
@@ -54,169 +54,151 @@
 								<input type="text" id="alamat_mahasiswa" name="alamat_mahasiswa" class="form-control">
 							</div>
 							<div class="from-group">
-								<button class="btn btn-primary" type="submit" name="simpan" v-on:click="simpan()"><i class="fas fa-save"></i>
+								<button class="btn btn-primary" type="submit" name="simpan" v-if="!edit" @click="simpan()"><i class="fas fa-save"></i>
 									Simpan
 								</button>
 
-								<button class="btn btn-danger" v-on:click="form = !form">
+								<button class="btn btn-primary" type="submit" name="simpan" v-if="edit" @click="editItem(id)"><i class="fas fa-save"></i>
+									Simpan
+								</button>
+
+								<button class="btn btn-danger" @click="form = 'tampil'">
 									<i class="fas fa-backward"></i> Kembali
 								</button>
 							</div>
-							</form>
-							 <button class="btn btn-default" v-if="edit" @click="editItem(id)">Edit Item</button>
-						</div>
+
 					</div>
-					
 				</div>
-				<div v-if="!form">
 
-					<div class="card" style="opacity: 0.95;">
-						<h5 class="card-header">Data Mahasiswa</h5>
-						<div class="card-body">
-							<button class="btn btn-primary" v-on:click="form = !form">
-								<i class="fas fa-plus-circle"></i> Tambah Data
-							</button>
-							<table class="table table-striped mt-3">
-								<tr>
-									<th>ID</th>
-									<th>NIM</th>
-									<th>Nama</th>
-									<th>Alamat</th>
-									<th>Aksi</th>
-								</tr>
-								<tr v-for="item in items">
-									<td>{{item.id}}</td>
-									<td>{{item.nim}}</td>
-									<td>{{item.nama_mahasiswa}}</td>
-									<td>{{item.alamat_mahasiswa}}</td>
-									<td>
-										<button class="btn btn-success" @click="showItem(item.id)">Ubah</button>
-										<button class="btn btn-danger" @click="hapus(item.id)">Hapus</button>
-									</td>
-								</tr>
-							</table>
-						</div>
-					</div>
+			</div>
 
+		<div v-if="form ==='tampil'">
+
+			<div class="card" style="opacity: 0.95;">
+				<h5 class="card-header">Data Mahasiswa</h5>
+				<div class="card-body">
+					<button class="btn btn-primary" @click="form = 'tambah'">
+						<i class="fas fa-plus-circle"></i> Tambah Data
+					</button>
+					<table class="table table-striped mt-3">
+						<tr>
+							<th>ID</th>
+							<th>NIM</th>
+							<th>Nama</th>
+							<th>Alamat</th>
+							<th>Aksi</th>
+						</tr>
+						<tr v-for="item in items">
+							<td>{{item.id}}</td>
+							<td>{{item.nim}}</td>
+							<td>{{item.nama_mahasiswa}}</td>
+							<td>{{item.alamat_mahasiswa}}</td>
+							<td>
+								<button class="btn btn-success" @click="ubah(item.id)">Ubah</button>
+								<button class="btn btn-danger" @click="hapus(item.id)">Hapus</button>
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
+
 		</div>
 	</div>
+</div>
+</div>
 
-	<script src="js/vue.js"></script>
-	<script src="js/axios.min.js"></script>
-	<script>
-		var example1 = new Vue({
-			el: '#app',
-			data: {
-				items: [],
-				form: false
+<script src="js/vue.js"></script>
+<script src="js/axios.min.js"></script>
+<script>
+	var example1 = new Vue({
+		el: '#app',
+		data: {
+			items: [],
+			form: 'tampil'
+		},
+		mounted(){
+			this.fetchProduks()
+		},
+		methods: {
+			fetchProduks(){
+				var s = this;
+				axios.get('http://localhost:8000/api/mahasiswa').then(function(response){
+					console.log(response.data)
+					s.items = response.data
+				})
+				.catch(function(error){
+					console.log(error)
+				})
 			},
-			mounted(){
-				this.fetchProduks()
+
+			simpan() {
+				var i_nim = document.getElementById("nim").value
+				var i_nama_mahasiswa = document.getElementById("nama_mahasiswa").value
+				var i_alamat_mahasiswa = document.getElementById("alamat_mahasiswa").value
+
+
+				var s = this;
+				axios.post("http://localhost:8000/api/mahasiswa", {
+					nim: i_nim,
+					nama_mahasiswa: i_nama_mahasiswa,
+					alamat_mahasiswa: i_alamat_mahasiswa,
+
+				})
+				.then(function(response){
+					console.log(response);
+					if (response.data.status == true){
+						s.form = s.form('tampil')
+						s.fetchProduks();
+					} else {
+						alert("data gagal disimpan")
+					}
+				})
+				.then(function(error){
+					console.log(error);
+				})
 			},
-			methods: {
-				fetchProduks(){
+
+			hapus(id) {
+				const confirmBox = confirm("Anda yakin ingin menghapus?")
+				if(confirmBox) {
 					var s = this;
-					axios.get('http://localhost:8000/api/mahasiswa').then(function(response){
-						console.log(response.data)
-						s.items = response.data
-					})
-					.catch(function(error){
-						console.log(error)
-					})
-				},
-
-				simpan() {
-					var i_nim = document.getElementById("nim").value
-					var i_nama_mahasiswa = document.getElementById("nama_mahasiswa").value
-					var i_alamat_mahasiswa = document.getElementById("alamat_mahasiswa").value
-
-
-					var s = this;
-					axios.post("http://localhost:8000/api/mahasiswa", {
-						nim: i_nim,
-						nama_mahasiswa: i_nama_mahasiswa,
-						alamat_mahasiswa: i_alamat_mahasiswa,
-
-					})
-					.then(function(response){
-						console.log(response);
-						if (response.data.status == true){
-							s.form = !s.form
-							s.fetchProduks();
-						} else {
-							alert("data gagal disimpan")
-						}
-					})
-					.then(function(error){
-						console.log(error);
-					})
-				},
-
-				showItem(id) {
-					this.edit = true
-					axios.get("http://localhost:8000/api/mahasiswa/" + id)
-					.then(
-						response => {
-							this.id = response.data.item.id,
-							this.upc_ean_isbn = response.data.item.upc_ean_isbn,
-							this.item_name = response.data.item.item_name,
-							this.size = response.data.item.size,
-							this.description = response.data.item.description,
-							this.cost_price = response.data.item.cost_price,
-							this.selling_price = response.data.item.selling_price,
-							this.quantity = response.data.item.quantity
-						},  
-						)
-					.catch(e => {
-						(error) => console.log(error)
-					});
-				},
-
-				editItem(id) {
-					axios.put("http://localhost:8000/api/mahasiswa/" + id, {
-						upc_ean_isbn: this.upc_ean_isbn,
-						item_name: this.item_name,
-						size: this.size,
-						description: this.description,
-						cost_price: this.cost_price,
-						selling_price: this.selling_price,
-						quantity: this.quantity
-					})
+					axios.delete("http://localhost:8000/api/mahasiswa/" + id)
 					.then(
 						(response => {
-							this.clearForm(),
-							this.getItem(),
-							this.edit = false
+							s.fetchProduks();	
 						})
 						)
 					.catch(
 						(error) => console.log(error)
 						);
-				},
+				} else {
+					s.fetchProduks();
+				}
+			},
 
-				hapus(id) {
-					const confirmBox = confirm("Anda yakin ingin menghapus?")
-					if(confirmBox) {
-						var s = this;
-						axios.delete("http://localhost:8000/api/mahasiswa/" + id)
-						.then(
-							(response => {
-								s.fetchProduks();	
-							})
-							)
-						.catch(
-							(error) => console.log(error)
-							);
-					} else {
-						s.fetchProduks();
-					}
-				},
+			ubah(id) {
+				this.edit = true
+				axios.get("http://localhost:8000/api/mahasiswa/" + id)
+				.then(
+					response => {
+						// this.id = response.data.item.id,
+						// this.upc_ean_isbn = response.data.item.upc_ean_isbn,
+						// this.item_name = response.data.item.item_name,
+						// this.size = response.data.item.size,
+						// this.description = response.data.item.description,
+						// this.cost_price = response.data.item.cost_price,
+						// this.selling_price = response.data.item.selling_price,
+						// this.quantity = response.data.item.quantity
+					},  
+					)
+				.catch(e => {
+					(error) => console.log(error)
+				});
+			},
 
-			}
-		})
-	</script>
+		}
+	})
+</script>
 
 </body>
 </html>
