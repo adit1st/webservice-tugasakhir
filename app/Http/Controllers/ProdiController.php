@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Prodi;
 
-class NilaiController extends Controller
+class ProdiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +14,8 @@ class NilaiController extends Controller
      */
     public function index()
     {
-        //
+        $data = prodi::all();
+        return response()->json(['item' => $data], 200);
     }
 
     /**
@@ -34,8 +36,14 @@ class NilaiController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+       $this->validate($request, [
+        'nama_prodi'=>'required|unique:prodi',
+        'akreditas'=>'required',
+        
+    ]);
+       $data = prodi::create($request->all());
+       return response()->json(['item' => $data], 201);
+   }
 
     /**
      * Display the specified resource.
@@ -45,7 +53,8 @@ class NilaiController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = prodi::findOrFail($id);
+        return response()->json(['item' => $data], 200);
     }
 
     /**
@@ -68,7 +77,15 @@ class NilaiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'nama_prodi'=>'required',
+            'akreditas'=>'required',
+            
+        ]);
+        $data = prodi::findOrFail($id);
+        $data->update($request->all());
+
+        return response()->json(['item' => $data], 200);
     }
 
     /**
@@ -79,6 +96,8 @@ class NilaiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = prodi::find($id);
+        $data->delete();
+        return $data;
     }
 }

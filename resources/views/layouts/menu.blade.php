@@ -12,6 +12,8 @@
 
                 <router-link to="/matakuliah" tag="li"><a class="nav-item nav-link ml-5"><i class="fas fa-book"></i> Matakuliah</a></router-link>
 
+                <router-link to="/prodi" tag="li"><a class="nav-item nav-link ml-5"><i class="fas fa-book"></i> Program Studi</a></router-link>
+
             </div>
         </div>
     </div>

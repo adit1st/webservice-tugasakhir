@@ -9,12 +9,23 @@
 							<form @submit.prevent="addItem">
 								<div class="form-group">
 									<label for="kode_matakuliah">Kode</label>
-									<input type="text" id="kode_matakuliah" name="kode_matakuliah" class="form-control" v-model="kode_matakuliah">
+									<input type="text" id="kode_matakuliah" name="kode_matakuliah" class="form-control" v-model="kode_matakuliah" :disabled="validated == 1">
+									<span v-if="er.kode_matakuliah" :class="['text-danger']">{{ er.kode_matakuliah[0] }}</span>
 								</div>
 
 								<div class="form-group">
 									<label for="nama_matakuliah">Nama</label>
 									<input type="text" id="nama_matakuliah" name="nama_matakuliah" class="form-control" v-model="nama_matakuliah">
+									<span v-if="er.nama_matakuliah" :class="['text-danger']">{{ er.nama_matakuliah[0] }}</span>
+								</div>
+
+								<div class="form-group">
+									<label for="prodi_id">Prodi</label>
+									<select class="form-control" name="prodi_id" id="prodi_id" v-model="prodi_id">
+											<option v-for="item in r" :value="item.id">
+												{{item.nama_prodi}}</option>
+									</select>
+									<span v-if="er.prodi_id" :class="['text-danger']">{{ er.prodi_id[0] }}</span>
 								</div>
 
 								<div class="form-group">
@@ -23,6 +34,7 @@
 											<option v-for="item in rs" :value="item.id">
 												{{item.nama_dosen}}</option>
 									</select>
+									<span v-if="er.dosen_id" :class="['text-danger']">{{ er.dosen_id[0] }}</span>
 								</div>
 
 								<div class="from-group">
@@ -37,13 +49,21 @@
 				<div class="col-md-8 float-right">
 					<div class="card" style="opacity: 0.95;">
 						<h5 class="card-header">Data Matakuliah</h5>
+
+						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data Berhasil Ditambahkan!</span>
+
+						<span v-if="ubah" :class="['text-center alert alert-success mt-3']">Data Berhasil Diubah!</span>
+
+						<span v-if="hapus" :class="['text-center alert alert-success mt-3']">Data Berhasil Dihapus!</span>
+
 						<div class="card-body">
 
-							<table class="table table-striped mt-3">
+							<table class="table table-striped">
 								<tr>
 									<th>NO</th>
 									<th>KODE</th>
 									<th>Nama</th>
+									<th>Prodi</th>
 									<th>Dosen Pengampu</th>
 
 									<th>Aksi</th>
@@ -52,6 +72,7 @@
 									<td>{{index + 1}}</td>
 									<td>{{item.kode_matakuliah}}</td>
 									<td>{{item.nama_matakuliah}}</td>
+									<td>{{item.prodi.nama_prodi}}</td>
 									<td>{{item.dosen.nama_dosen}}</td>
 									
 
@@ -78,10 +99,16 @@
 				id: '',
 				kode_matakuliah: '',
 				nama_matakuliah: '',
+				prodi_id: '',
 				dosen_id: '',	
 				results: [],
 				rs: [],
-				
+				r:[],
+				er: [],
+				validated: false,
+				tambah : false,    
+				ubah : false,    
+				hapus : false,
 				edit: false
 			}
 		},
@@ -90,17 +117,21 @@
 			clearForm() {
 				this.kode_matakuliah = '',
 				this.nama_matakuliah = '',
+				this.prodi_id = '',
 				this.dosen_id = ''
 
 			},
 			balik() {
 				this.clearForm(),
+				this.validated = false;
 				this.edit = false
 			},
 			getItem() {
 				axios.get("/api/matakuliah")
 				.then(
-					response => {this.results = response.data.item, this.rs = response.data.item2},  
+					response => {this.results = response.data.item, 
+						this.rs = response.data.item2, 
+						this.r = response.data.item3},  
 					
 					)
 				.catch(e => {
@@ -115,9 +146,9 @@
 						this.id = response.data.item.id,
 						this.kode_matakuliah = response.data.item.kode_matakuliah,
 						this.nama_matakuliah = response.data.item.nama_matakuliah,
-						this.dosen_id = response.data.item.dosen_id
-
-
+						this.prodi_id = response.data.item.prodi_id,
+						this.dosen_id = response.data.item.dosen_id,
+						this.validated = true;
 					},  
 					)
 				.catch(e => {
@@ -128,27 +159,37 @@
 				axios.put("/api/matakuliah/" + id, {
 					kode_matakuliah: this.kode_matakuliah,
 					nama_matakuliah: this.nama_matakuliah,
+					prodi_id: this.prodi_id,
 					dosen_id: this.dosen_id
 					
 				})
 				.then(
 					(response => {
 						this.clearForm(),
+						this.er = [];
 						this.getItem(),
-						this.edit = false
+						this.edit = false;
+						this.validated = false;
+						this.tambah = false;
+						this.hapus = false;
+						this.ubah = true;
 					})
 					)
 				.catch(
-					(error) => console.log(error)
-					);
+					(error) => {console.log(error),
+						this.er = error.response.data.errors;
+					});
 			},
 			removeItem(id) {
-				const confirmBox = confirm("Are you sure want remove?")
+				const confirmBox = confirm("Anda yakin ingin menghapus?")
 				if(confirmBox)
 					axios.delete("/api/matakuliah/" + id)
 				.then(
 					(response => {
-						this.getItem()
+						this.getItem(),
+						this.tambah = false;
+						this.ubah = false;
+						this.hapus = true;
 					})
 					)
 				.catch(
@@ -159,18 +200,24 @@
 				axios.post("/api/matakuliah", {
 					kode_matakuliah: this.kode_matakuliah,
 					nama_matakuliah: this.nama_matakuliah,
+					prodi_id: this.prodi_id,
 					dosen_id: this.dosen_id
 
 				})
 				.then(
 					(response => {
 						this.clearForm(),
-						this.getItem()
+						this.er = [];
+						this.getItem(),
+						this.ubah = false;
+						this.hapus = false;
+						this.tambah = true;
 					})
 					)
 				.catch(
-					(error) => console.log(error)
-					);
+					(error) => {console.log(error),
+						this.er = error.response.data.errors;
+					});
 			}
 
 		},

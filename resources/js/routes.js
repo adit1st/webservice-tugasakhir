@@ -16,6 +16,10 @@ let routes=[
 {
         path:'/matakuliah',
         components:require('./components/matakuliah')
+},
+{
+        path:'/prodi',
+        components:require('./components/prodi')
 }
 ]
 

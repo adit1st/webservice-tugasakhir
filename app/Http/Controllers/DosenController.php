@@ -36,8 +36,15 @@ class DosenController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'nik'=>'required|unique:dosen',
+            'nama_dosen'=>'required',
+            'pendidikan'=>'required',
+            'alamat_dosen'=>'required',
+            
+        ]);
         $data = dosen::create($request->all());
-        return response()->json(['item' => $data], 200);
+        return response()->json(['item' => $data], 201);
     }
 
     /**
@@ -72,6 +79,13 @@ class DosenController extends Controller
      */
     public function update(Request $request, $id)
     {
+         $this->validate($request, [
+            'nik'=>'required',
+            'nama_dosen'=>'required',
+            'pendidikan'=>'required',
+            'alamat_dosen'=>'required',
+            
+        ]);
         $data = dosen::findOrFail($id);
         $data->update($request->all());
 

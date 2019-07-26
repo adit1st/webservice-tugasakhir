@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Mahasiswa;
+use App\Prodi;
 
 class MahasiswaController extends Controller
 {
@@ -14,8 +15,10 @@ class MahasiswaController extends Controller
      */
     public function index()
     {
-        $data = mahasiswa::all();
-        return response()->json(['item' => $data], 200);
+        $data = mahasiswa::with('prodi')->get();
+        $data2 = prodi::all();
+
+        return response()->json(['item' => $data, 'item2' => $data2], 200);
     }
 
     /**
@@ -39,13 +42,13 @@ class MahasiswaController extends Controller
         $this->validate($request, [
             'nim'=>'required|unique:mahasiswa|numeric',
             'nama_mahasiswa'=>'required',
-            'pendidikan'=>'required',
+            'prodi_id'=>'required',
             'alamat_mahasiswa'=>'required',
             
         ]);
 
         $data = mahasiswa::create($request->all());
-        return response()->json(['item' => $data], 200);
+        return response()->json(['item' => $data], 201);
     }
 
     /**
@@ -80,7 +83,15 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'nim'=>'required|numeric',
+            'nama_mahasiswa'=>'required',
+            'prodi_id'=>'required',
+            'alamat_mahasiswa'=>'required',
+            
+        ]);
         $data = Mahasiswa::findOrFail($id);
+
         $data->update($request->all());
 
         return response()->json(['item' => $data], 200);

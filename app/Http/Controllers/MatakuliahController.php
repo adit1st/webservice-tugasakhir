@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Matakuliah;
 use App\Dosen;
+use App\Prodi;
 
 class MatakuliahController extends Controller
 {
@@ -15,10 +16,11 @@ class MatakuliahController extends Controller
      */
     public function index()
     {
-        $data = matakuliah::with('dosen')->get();
+        $data = matakuliah::with('dosen', 'prodi')->get();
         $data2 = dosen::all();
+        $data3 = prodi::all();
         
-        return response()->json(['item' => $data, 'item2' => $data2], 200);
+        return response()->json(['item' => $data, 'item2' => $data2, 'item3' => $data3], 200);
     }
 
     /**
@@ -39,9 +41,15 @@ class MatakuliahController extends Controller
      */
     public function store(Request $request)
     {
+         $this->validate($request, [
+            'kode_matakuliah'=>'required|unique:matakuliah',
+            'nama_matakuliah'=>'required',
+            'prodi_id'=>'required',
+            'dosen_id'=>'required',
+        ]);
         $data = matakuliah::create($request->all());
        
-        return response()->json(['item' => $data], 200);
+        return response()->json(['item' => $data], 201);
     }
 
     /**
@@ -76,6 +84,12 @@ class MatakuliahController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'kode_matakuliah'=>'required',
+            'nama_matakuliah'=>'required',
+            'prodi_id'=>'required',
+            'dosen_id'=>'required',
+        ]);
         $data = matakuliah::findOrFail($id);
         $data->update($request->all());
 

@@ -7,28 +7,34 @@
 						<h5 class="card-header">Tambah Data Mahasiswa</h5>
 						<div class="card-body">
 							<form @submit.prevent="addItem">
-								<div :class="['form-group', { 'has-error' : errors.nim }]">
-									<label for="nim">NIM</label>
-									<input type="text" id="nim" name="nim" class="form-control" v-model="nim">
-									<span v-if="errors.nim" class="label label-danger">
-										{{ errors.nim[0] }}
-									</span>
-								</div>
+
 								<div class="form-group">
-									<label for="nama_mahasiswa">Nama</label>
-									<input type="text" id="nama_mahasiswa" name="nama_mahasiswa" class="form-control" v-model="nama_mahasiswa">
+									<label for="nim">NIM</label>
+									<input type="text" id="nim" name="nim" class="form-control" v-model="nim" :disabled="validated == 1">
+									<span v-if="er.nim" :class="['text-danger']">{{ er.nim[0] }}</span>
 								</div>
 
 								<div class="form-group">
-									<label for="pendidikan">Pendidikan</label>
-									<input type="text" id="pendidikan" name="pendidikan" class="form-control" v-model="pendidikan">
+									<label for="nama_mahasiswa">Nama</label>
+									<input type="text" id="nama_mahasiswa" name="nama_mahasiswa" class="form-control" v-model="nama_mahasiswa">
+									<span v-if="er.nama_mahasiswa" :class="['text-danger']">{{ er.nama_mahasiswa[0] }}</span>
+								</div>
+
+								<div class="form-group">
+									<label for="prodi_id">Prodi</label>
+									<select class="form-control" name="prodi_id" id="prodi_id" v-model="prodi_id">
+										<option v-for="item in r" :value="item.id">
+										{{item.nama_prodi}}</option>
+									</select>
+									<span v-if="er.prodi_id" :class="['text-danger']">{{ er.prodi_id[0] }}</span>
 								</div>
 
 								<div class="form-group">
 									<label for="alamat_mahasiswa">Alamat</label>
-									<input type="text" id="alamat_mahasiswa" name="alamat_mahasiswa" class="form-control" v-model="alamat_mahasiswa">
+									<textarea class="form-control" id="alamat_mahasiswa" nama="alamat_mahasiswa" rows="3" v-model="alamat_mahasiswa"></textarea>
+									<span v-if="er.alamat_mahasiswa" :class="['text-danger']">{{ er.alamat_mahasiswa[0] }}</span>
 								</div>
-
+								
 								<div class="from-group">
 									<button class="btn btn-primary" type="submit" name="simpan" v-if="!edit"><i class="fas fa-save"></i> Simpan</button>
 								</div>
@@ -41,15 +47,21 @@
 				<div class="col-md-8 float-right">
 					<div class="card" style="opacity: 0.95;">
 						<h5 class="card-header">Data Mahasiswa</h5>
+						
+						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data Berhasil Ditambahkan!</span>
+
+						<span v-if="ubah" :class="['text-center alert alert-success mt-3']">Data Berhasil Diubah!</span>
+
+						<span v-if="hapus" :class="['text-center alert alert-success mt-3']">Data Berhasil Dihapus!</span>
+						
 						<div class="card-body">
 
-
-							<table class="table table-striped mt-3">
+							<table class="table table-striped">
 								<tr>
 									<th>NO</th>
 									<th>NIM</th>
 									<th>Nama</th>
-									<th>Pendidikan</th>
+									<th>Prodi</th>
 									<th>Alamat</th>
 									<th>Aksi</th>
 								</tr>
@@ -57,7 +69,7 @@
 									<td>{{index + 1}}</td>
 									<td>{{item.nim}}</td>
 									<td>{{item.nama_mahasiswa}}</td>
-									<td>{{item.pendidikan}}</td>
+									<td>{{item.prodi.nama_prodi}}</td>
 									<td>{{item.alamat_mahasiswa}}</td>
 									<td>
 										<button class="btn btn-success" @click="showItem(item.id)"><i class="fas fa-edit"></i></button>
@@ -81,48 +93,34 @@
 				id: '',
 				nim: '',
 				nama_mahasiswa: '',
-				pendidikan: '',
+				prodi_id: '',
 				alamat_mahasiswa: '',
-				alert: {},
+				er: [],
 				results: [],
-				errors: [],
+				r: [],
+				validated: false,
+				tambah : false,    
+				ubah : false,    
+				hapus : false,    
 				edit: false
 			}
 		},
 		methods: {
-			submit(e) {
-				this.errors = [];
-				this.alert = {};
-				axios.post(e.target.action, this.state).then(response => {
-					if (response.data.status) {
-						this.alert = {
-							type: 'success',
-							message: response.data.message
-						}
-						this.errors = [];
-					}
-				}).catch(error => {
-					if (error) {
-						if (error.response.status == 422) {
-							this.errors = error.response.data;
-						}
-					}
-				});
-			},
 			clearForm() {
 				this.nim = '',
 				this.nama_mahasiswa = '',
-				this.pendidikan = '',
+				this.prodi_id = '',
 				this.alamat_mahasiswa = ''
 			},
 			balik() {
 				this.clearForm(),
+				this.validated = false;
 				this.edit = false
 			},
 			getItem() {
 				axios.get("/api/mahasiswa")
 				.then(
-					response => {this.results = response.data.item},  
+					response => {this.results = response.data.item, this.r = response.data.item2},  
 					)
 				.catch(e => {
 					this.errors.push(e)
@@ -136,9 +134,9 @@
 						this.id = response.data.item.id,
 						this.nim = response.data.item.nim,
 						this.nama_mahasiswa = response.data.item.nama_mahasiswa,
-						this.pendidikan = response.data.item.pendidikan,
-						this.alamat_mahasiswa = response.data.item.alamat_mahasiswa
-
+						this.prodi_id = response.data.item.prodi_id,
+						this.alamat_mahasiswa = response.data.item.alamat_mahasiswa,
+						this.validated = true;
 					},  
 					)
 				.catch(e => {
@@ -149,19 +147,25 @@
 				axios.put("/api/mahasiswa/" + id, {
 					nim: this.nim,
 					nama_mahasiswa: this.nama_mahasiswa,
-					pendidikan: this.pendidikan,
+					prodi_id: this.prodi_id,
 					alamat_mahasiswa: this.alamat_mahasiswa
 				})
 				.then(
 					(response => {
 						this.clearForm(),
+						this.er = [];
 						this.getItem(),
-						this.edit = false
+						this.edit = false;
+						this.validated = false;
+						this.tambah = false;
+						this.hapus = false;
+						this.ubah = true;
 					})
 					)
 				.catch(
-					(error) => console.log(error)
-					);
+					(error) => {console.log(error),
+						this.er = error.response.data.errors;	
+					});
 			},
 			removeItem(id) {
 				const confirmBox = confirm("Anda yakin ingin menghapus?")
@@ -169,7 +173,10 @@
 					axios.delete("/api/mahasiswa/" + id)
 				.then(
 					(response => {
-						this.getItem()
+						this.getItem(),
+						this.tambah = false;
+						this.ubah = false;
+						this.hapus = true;
 					})
 					)
 				.catch(
@@ -180,18 +187,24 @@
 				axios.post("/api/mahasiswa", {
 					nim: this.nim,
 					nama_mahasiswa: this.nama_mahasiswa,
-					pendidikan: this.pendidikan,
+					prodi_id: this.prodi_id,
 					alamat_mahasiswa: this.alamat_mahasiswa
 				})
 				.then(
 					(response => {
 						this.clearForm(),
-						this.getItem()
+						this.er = [];
+						this.getItem(),
+						this.ubah = false;
+						this.hapus = false;
+						this.tambah = true;
 					})
 					)
 				.catch(
-					(error) => console.log(error)
-					);
+					(error) => {console.log(error),
+						this.er = error.response.data.errors;
+					});
+				
 			}
 
 		},

@@ -4,31 +4,19 @@
 			<div class="col-md-12">
 				<div class="col-md-4 float-left">
 					<div class="card" style="opacity: 0.95;">
-						<h5 class="card-header">Tambah Data Dosen</h5>
+						<h5 class="card-header">Tambah Data Prodi</h5>
 						<div class="card-body">
 							<form @submit.prevent="addItem">
 								<div class="form-group">
-									<label for="nik">NIK</label>
-									<input type="text" id="nik" name="nik" class="form-control" v-model="nik" :disabled="validated == 1">
-									<span v-if="er.nik" :class="['text-danger']">{{ er.nik[0] }}</span>
+									<label for="nama_prodi">Nama</label>
+									<input type="text" id="nama_prodi" name="nama_prodi" class="form-control" v-model="nama_prodi" :disabled="validated == 1">
+									<span v-if="er.nama_prodi" :class="['text-danger']">{{ er.nama_prodi[0] }}</span>
 								</div>
 
 								<div class="form-group">
-									<label for="nama_dosen">Nama</label>
-									<input type="text" id="nama_dosen" name="nama_dosen" class="form-control" v-model="nama_dosen">
-									<span v-if="er.nama_dosen" :class="['text-danger']">{{ er.nama_dosen[0] }}</span>
-								</div>
-
-								<div class="form-group">
-									<label for="pendidikan">Pendidikan Terakhir</label>
-									<input type="text" id="pendidikan" name="pendidikan" class="form-control" v-model="pendidikan">
-									<span v-if="er.pendidikan" :class="['text-danger']">{{ er.pendidikan[0] }}</span>
-								</div>
-
-								<div class="form-group">
-									<label for="alamat_dosen">Alamat</label>
-									<textarea class="form-control" id="alamat_dosen" nama="alamat_dosen" rows="3" v-model="alamat_dosen"></textarea>
-									<span v-if="er.alamat_dosen" :class="['text-danger']">{{ er.alamat_dosen[0] }}</span>
+									<label for="akreditas">Akreditas</label>
+									<input type="text" id="akreditas" name="akreditas" class="form-control" v-model="akreditas">
+									<span v-if="er.akreditas" :class="['text-danger']">{{ er.akreditas[0] }}</span>
 								</div>
 
 								<div class="from-group">
@@ -42,7 +30,7 @@
 				</div>
 				<div class="col-md-8 float-right">
 					<div class="card" style="opacity: 0.95;">
-						<h5 class="card-header">Data Dosen</h5>
+						<h5 class="card-header">Data Prodi</h5>
 
 						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data Berhasil Ditambahkan!</span>
 
@@ -55,18 +43,16 @@
 							<table class="table table-striped">
 								<tr>
 									<th>NO</th>
-									<th>NIK</th>
 									<th>Nama</th>
-									<th>Pendidikan Terakhir</th>
-									<th>Alamat</th>
+									<th>Akreditas</th>
+							
 									<th>Aksi</th>
 								</tr>
 								<tr v-for="(item, index) in results">
 									<td>{{index + 1}}</td>
-									<td>{{item.nik}}</td>
-									<td>{{item.nama_dosen}}</td>
-									<td>{{item.pendidikan}}</td>
-									<td>{{item.alamat_dosen}}</td>
+									<td>{{item.nama_prodi}}</td>
+									<td>{{item.akreditas}}</td>
+								
 									<td>
 										<button class="btn btn-success" @click="showItem(item.id)"><i class="fas fa-edit"></i></button>
 										<button class="btn btn-danger" @click="removeItem(item.id)"><i class="fas fa-trash-alt"></i></button>
@@ -87,10 +73,8 @@
 		data () {
 			return {
 				id: '',
-				nik: '',
-				nama_dosen: '',
-				pendidikan: '',
-				alamat_dosen: '',
+				nama_prodi: '',
+				akreditas: '',
 				results: [],
 				er: [],
 				validated: false,
@@ -102,10 +86,8 @@
 		},
 		methods: {
 			clearForm() {
-				this.nik = '',
-				this.nama_dosen = '',
-				this.pendidikan = '',
-				this.alamat_dosen = ''
+				this.nama_prodi = '',
+				this.akreditas = ''
 			},
 			balik() {
 				this.clearForm(),
@@ -113,7 +95,7 @@
 				this.edit = false
 			},
 			getItem() {
-				axios.get("/api/dosen")
+				axios.get("/api/prodi")
 				.then(
 					response => {this.results = response.data.item},  
 					)
@@ -123,14 +105,12 @@
 			},
 			showItem(id) {
 				this.edit = true
-				axios.get("/api/dosen/" + id)
+				axios.get("/api/prodi/" + id)
 				.then(
 					response => {
 						this.id = response.data.item.id,
-						this.nik = response.data.item.nik,
-						this.pendidikan = response.data.item.pendidikan,
-						this.nama_dosen = response.data.item.nama_dosen,
-						this.alamat_dosen = response.data.item.alamat_dosen,
+						this.nama_prodi = response.data.item.nama_prodi,
+						this.akreditas = response.data.item.akreditas,
 						this.validated = true;
 					},  
 					)
@@ -139,11 +119,9 @@
 				});
 			},
 			editItem(id) {
-				axios.put("/api/dosen/" + id, {
-					nik: this.nik,
-					nama_dosen: this.nama_dosen,
-					pendidikan: this.pendidikan,
-					alamat_dosen: this.alamat_dosen
+				axios.put("/api/prodi/" + id, {
+					nama_prodi: this.nama_prodi,
+					akreditas: this.akreditas
 				})
 				.then(
 					(response => {
@@ -159,13 +137,13 @@
 					)
 				.catch(
 					(error) => {console.log(error),
-						this.er = error.response.data.errors;	
+						this.er = error.response.data.errors;
 					});
 			},
 			removeItem(id) {
-				const confirmBox = confirm("Anda yakin ingin menghapus?")
+				const confirmBox = confirm("Are you sure want remove?")
 				if(confirmBox)
-					axios.delete("/api/dosen/" + id)
+					axios.delete("/api/prodi/" + id)
 				.then(
 					(response => {
 						this.getItem(),
@@ -179,11 +157,9 @@
 					);
 			},
 			addItem() {
-				axios.post("/api/dosen", {
-					nik: this.nik,
-					nama_dosen: this.nama_dosen,
-					pendidikan: this.pendidikan,
-					alamat_dosen: this.alamat_dosen
+				axios.post("/api/prodi", {
+					nama_prodi: this.nama_prodi,
+					akreditas: this.akreditas
 				})
 				.then(
 					(response => {

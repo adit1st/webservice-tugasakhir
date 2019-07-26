@@ -15,6 +15,14 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('login', function() {
+    $tes = request()->only('email', 'password');
+
+    if (auth()->once($tes)){
+    	return auth()->user();
+    }
+    return 'fail';
+});
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -23,10 +31,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::resource('/mahasiswa', 'MahasiswaController');
 Route::resource('/matakuliah', 'MatakuliahController');
 Route::resource('/dosen', 'DosenController');
-Route::resource('/nilai', 'NilaiController');
+Route::resource('/prodi', 'ProdiController');
 
-Route::post('/mhs', 'MhsController@postMhs');
-Route::get('/mhs', 'MhsController@getMhs');
-Route::get('/mhs/{id}', 'MhsController@showMhs');
-Route::put('/mhs/{id}', 'MhsController@editMhs');
-Route::delete('/mhs/{id}', 'MhsController@deleteMhs');
+
