@@ -1851,6 +1851,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -1866,6 +1868,7 @@ __webpack_require__.r(__webpack_exports__);
       tambah: false,
       ubah: false,
       hapus: false,
+      fail: false,
       edit: false
     };
   },
@@ -1912,6 +1915,7 @@ __webpack_require__.r(__webpack_exports__);
         _this3.validated = false;
         _this3.tambah = false;
         _this3.hapus = false;
+        _this3.fail = false;
         _this3.ubah = true;
       })["catch"](function (error) {
         console.log(error), _this3.er = error.response.data.errors;
@@ -1924,9 +1928,10 @@ __webpack_require__.r(__webpack_exports__);
       if (confirmBox) axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/dosen/" + id).then(function (response) {
         _this4.getItem(), _this4.tambah = false;
         _this4.ubah = false;
+        _this4.fail = false;
         _this4.hapus = true;
       })["catch"](function (error) {
-        return console.log(error);
+        return _this4.fail = true;
       });
     },
     addItem: function addItem() {
@@ -1941,6 +1946,7 @@ __webpack_require__.r(__webpack_exports__);
         _this5.clearForm(), _this5.er = [];
         _this5.getItem(), _this5.ubah = false;
         _this5.hapus = false;
+        _this5.fail = false;
         _this5.tambah = true;
       })["catch"](function (error) {
         console.log(error), _this5.er = error.response.data.errors;
@@ -2445,6 +2451,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2458,6 +2466,7 @@ __webpack_require__.r(__webpack_exports__);
       tambah: false,
       ubah: false,
       hapus: false,
+      fail: false,
       edit: false
     };
   },
@@ -2502,6 +2511,7 @@ __webpack_require__.r(__webpack_exports__);
         _this3.validated = false;
         _this3.tambah = false;
         _this3.hapus = false;
+        _this3.fail = false;
         _this3.ubah = true;
       })["catch"](function (error) {
         console.log(error), _this3.er = error.response.data.errors;
@@ -2510,13 +2520,14 @@ __webpack_require__.r(__webpack_exports__);
     removeItem: function removeItem(id) {
       var _this4 = this;
 
-      var confirmBox = confirm("Are you sure want remove?");
+      var confirmBox = confirm("Anda yakin ingin menghapus?");
       if (confirmBox) axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]("/api/prodi/" + id).then(function (response) {
         _this4.getItem(), _this4.tambah = false;
         _this4.ubah = false;
+        _this4.fail = false;
         _this4.hapus = true;
       })["catch"](function (error) {
-        return console.log(error);
+        return _this4.fail = true;
       });
     },
     addItem: function addItem() {
@@ -2529,6 +2540,7 @@ __webpack_require__.r(__webpack_exports__);
         _this5.clearForm(), _this5.er = [];
         _this5.getItem(), _this5.ubah = false;
         _this5.hapus = false;
+        _this5.fail = false;
         _this5.tambah = true;
       })["catch"](function (error) {
         console.log(error), _this5.er = error.response.data.errors;
@@ -38190,7 +38202,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Ditambahkan!")]
+                  [_vm._v("Data berhasil ditambahkan!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -38198,7 +38210,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Diubah!")]
+                  [_vm._v("Data berhasil diubah!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -38206,8 +38218,14 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Dihapus!")]
+                  [_vm._v("Data berhasil dihapus!")]
                 )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.fail
+              ? _c("span", { class: ["text-center alert alert-danger mt-3"] }, [
+                  _vm._v("Hapus data relasi terlebih dahulu!")
+                ])
               : _vm._e(),
             _vm._v(" "),
             _c("div", { staticClass: "card-body" }, [
@@ -38563,7 +38581,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Ditambahkan!")]
+                  [_vm._v("Data berhasil ditambahkan!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -38571,7 +38589,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Diubah!")]
+                  [_vm._v("Data berhasil diubah!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -38579,7 +38597,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Dihapus!")]
+                  [_vm._v("Data berhasil dihapus!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -38951,7 +38969,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Ditambahkan!")]
+                  [_vm._v("Data berhasil ditambahkan!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -38959,7 +38977,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Diubah!")]
+                  [_vm._v("Data berhasil diubah!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -38967,7 +38985,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Dihapus!")]
+                  [_vm._v("Data berhasil dihapus!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -39235,7 +39253,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Ditambahkan!")]
+                  [_vm._v("Data berhasil ditambahkan!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -39243,7 +39261,7 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Diubah!")]
+                  [_vm._v("Data berhasil diubah!")]
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -39251,8 +39269,14 @@ var render = function() {
               ? _c(
                   "span",
                   { class: ["text-center alert alert-success mt-3"] },
-                  [_vm._v("Data Berhasil Dihapus!")]
+                  [_vm._v("Data berhasil dihapus!")]
                 )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.fail
+              ? _c("span", { class: ["text-center alert alert-danger mt-3"] }, [
+                  _vm._v("Hapus data relasi terlebih dahulu!")
+                ])
               : _vm._e(),
             _vm._v(" "),
             _c("div", { staticClass: "card-body" }, [

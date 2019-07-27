@@ -48,11 +48,11 @@
 					<div class="card" style="opacity: 0.95;">
 						<h5 class="card-header">Data Mahasiswa</h5>
 						
-						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data Berhasil Ditambahkan!</span>
+						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data berhasil ditambahkan!</span>
 
-						<span v-if="ubah" :class="['text-center alert alert-success mt-3']">Data Berhasil Diubah!</span>
+						<span v-if="ubah" :class="['text-center alert alert-success mt-3']">Data berhasil diubah!</span>
 
-						<span v-if="hapus" :class="['text-center alert alert-success mt-3']">Data Berhasil Dihapus!</span>
+						<span v-if="hapus" :class="['text-center alert alert-success mt-3']">Data berhasil dihapus!</span>
 						
 						<div class="card-body">
 

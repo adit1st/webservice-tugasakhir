@@ -32,11 +32,13 @@
 					<div class="card" style="opacity: 0.95;">
 						<h5 class="card-header">Data Prodi</h5>
 
-						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data Berhasil Ditambahkan!</span>
+						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data berhasil ditambahkan!</span>
 
-						<span v-if="ubah" :class="['text-center alert alert-success mt-3']">Data Berhasil Diubah!</span>
+						<span v-if="ubah" :class="['text-center alert alert-success mt-3']">Data berhasil diubah!</span>
 
-						<span v-if="hapus" :class="['text-center alert alert-success mt-3']">Data Berhasil Dihapus!</span>
+						<span v-if="hapus" :class="['text-center alert alert-success mt-3']">Data berhasil dihapus!</span>
+
+						<span v-if="fail" :class="['text-center alert alert-danger mt-3']">Hapus data relasi terlebih dahulu!</span>
 
 						<div class="card-body">
 
@@ -81,6 +83,7 @@
 				tambah : false,    
 				ubah : false,    
 				hapus : false,
+				fail : false,
 				edit: false
 			}
 		},
@@ -132,6 +135,7 @@
 						this.validated = false;
 						this.tambah = false;
 						this.hapus = false;
+						this.fail = false;
 						this.ubah = true;
 					})
 					)
@@ -141,7 +145,7 @@
 					});
 			},
 			removeItem(id) {
-				const confirmBox = confirm("Are you sure want remove?")
+				const confirmBox = confirm("Anda yakin ingin menghapus?")
 				if(confirmBox)
 					axios.delete("/api/prodi/" + id)
 				.then(
@@ -149,11 +153,12 @@
 						this.getItem(),
 						this.tambah = false;
 						this.ubah = false;
+						this.fail = false;
 						this.hapus = true;
 					})
 					)
 				.catch(
-					(error) => console.log(error)
+					(error) => this.fail = true
 					);
 			},
 			addItem() {
@@ -168,6 +173,7 @@
 						this.getItem(),
 						this.ubah = false;
 						this.hapus = false;
+						this.fail = false;
 						this.tambah = true;
 					})
 					)
