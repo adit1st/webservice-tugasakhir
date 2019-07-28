@@ -4,31 +4,37 @@
 			<div class="col-md-12">
 				<div class="col-md-4 float-left">
 					<div class="card" style="opacity: 0.95;">
-						<h5 class="card-header">Tambah Data Dosen</h5>
+						<h5 class="card-header">Tambah Data Matakuliah</h5>
 						<div class="card-body">
 							<form @submit.prevent="addItem">
 								<div class="form-group">
-									<label for="nik">NIK</label>
-									<input type="text" id="nik" name="nik" class="form-control" v-model="nik" :disabled="validated == 1">
-									<span v-if="er.nik" :class="['text-danger']">{{ er.nik[0] }}</span>
+									<label for="kode_matakuliah">Kode</label>
+									<input type="text" id="kode_matakuliah" name="kode_matakuliah" class="form-control" v-model="kode_matakuliah" :disabled="validated == 1">
+									<span v-if="er.kode_matakuliah" :class="['text-danger']">{{ er.kode_matakuliah[0] }}</span>
 								</div>
 
 								<div class="form-group">
-									<label for="nama_dosen">Nama</label>
-									<input type="text" id="nama_dosen" name="nama_dosen" class="form-control" v-model="nama_dosen">
-									<span v-if="er.nama_dosen" :class="['text-danger']">{{ er.nama_dosen[0] }}</span>
+									<label for="nama_matakuliah">Nama</label>
+									<input type="text" id="nama_matakuliah" name="nama_matakuliah" class="form-control" v-model="nama_matakuliah">
+									<span v-if="er.nama_matakuliah" :class="['text-danger']">{{ er.nama_matakuliah[0] }}</span>
 								</div>
 
 								<div class="form-group">
-									<label for="pendidikan">Pendidikan Terakhir</label>
-									<input type="text" id="pendidikan" name="pendidikan" class="form-control" v-model="pendidikan">
-									<span v-if="er.pendidikan" :class="['text-danger']">{{ er.pendidikan[0] }}</span>
+									<label for="prodi_id">Prodi</label>
+									<select class="form-control" name="prodi_id" id="prodi_id" v-model="prodi_id">
+											<option v-for="item in r" :value="item.id">
+												{{item.nama_prodi}}</option>
+									</select>
+									<span v-if="er.prodi_id" :class="['text-danger']">{{ er.prodi_id[0] }}</span>
 								</div>
 
 								<div class="form-group">
-									<label for="alamat_dosen">Alamat</label>
-									<textarea class="form-control" id="alamat_dosen" nama="alamat_dosen" rows="3" v-model="alamat_dosen"></textarea>
-									<span v-if="er.alamat_dosen" :class="['text-danger']">{{ er.alamat_dosen[0] }}</span>
+									<label for="dosen_id">Dosen Pengampu</label>
+									<select class="form-control" name="dosen_id" id="dosen_id" v-model="dosen_id">
+											<option v-for="item in rs" :value="item.id">
+												{{item.nama_dosen}}</option>
+									</select>
+									<span v-if="er.dosen_id" :class="['text-danger']">{{ er.dosen_id[0] }}</span>
 								</div>
 
 								<div class="from-group">
@@ -42,7 +48,7 @@
 				</div>
 				<div class="col-md-8 float-right">
 					<div class="card" style="opacity: 0.95;">
-						<h5 class="card-header">Data Dosen</h5>
+						<h5 class="card-header">Data Matakuliah</h5>
 
 						<span v-if="tambah" :class="['text-center alert alert-success mt-3']">Data berhasil ditambahkan!</span>
 
@@ -50,25 +56,27 @@
 
 						<span v-if="hapus" :class="['text-center alert alert-success mt-3']">Data berhasil dihapus!</span>
 
-						<span v-if="fail" :class="['text-center alert alert-danger mt-3']">Hapus data relasi terlebih dahulu!</span>
-
 						<div class="card-body">
 
 							<table class="table table-striped">
 								<tr>
 									<th>NO</th>
-									<th>NIK</th>
+									<th>KODE</th>
 									<th>Nama</th>
-									<th>Pendidikan Terakhir</th>
-									<th>Alamat</th>
+									<th>Prodi</th>
+									<th>Dosen Pengampu</th>
+
 									<th>Aksi</th>
 								</tr>
 								<tr v-for="(item, index) in results">
 									<td>{{index + 1}}</td>
-									<td>{{item.nik}}</td>
-									<td>{{item.nama_dosen}}</td>
-									<td>{{item.pendidikan}}</td>
-									<td>{{item.alamat_dosen}}</td>
+									<td>{{item.kode_matakuliah}}</td>
+									<td>{{item.nama_matakuliah}}</td>
+									<td>{{item.prodi.nama_prodi}}</td>
+									<td>{{item.dosen.nama_dosen}}</td>
+									
+
+
 									<td>
 										<button class="btn btn-success" @click="showItem(item.id)"><i class="fas fa-edit"></i></button>
 										<button class="btn btn-danger" @click="removeItem(item.id)"><i class="fas fa-trash-alt"></i></button>
@@ -89,26 +97,29 @@
 		data () {
 			return {
 				id: '',
-				nik: '',
-				nama_dosen: '',
-				pendidikan: '',
-				alamat_dosen: '',
+				kode_matakuliah: '',
+				nama_matakuliah: '',
+				prodi_id: '',
+				dosen_id: '',	
 				results: [],
+				rs: [],
+				r:[],
 				er: [],
 				validated: false,
 				tambah : false,    
 				ubah : false,    
 				hapus : false,
-				fail : false,
 				edit: false
 			}
 		},
+
 		methods: {
 			clearForm() {
-				this.nik = '',
-				this.nama_dosen = '',
-				this.pendidikan = '',
-				this.alamat_dosen = ''
+				this.kode_matakuliah = '',
+				this.nama_matakuliah = '',
+				this.prodi_id = '',
+				this.dosen_id = ''
+
 			},
 			balik() {
 				this.clearForm(),
@@ -116,9 +127,12 @@
 				this.edit = false
 			},
 			getItem() {
-				axios.get("/api/dosen")
+				axios.get("/matakuliah")
 				.then(
-					response => {this.results = response.data.item},  
+					response => {this.results = response.data.item, 
+						this.rs = response.data.item2, 
+						this.r = response.data.item3},  
+					
 					)
 				.catch(e => {
 					this.errors.push(e)
@@ -126,14 +140,14 @@
 			},
 			showItem(id) {
 				this.edit = true
-				axios.get("/api/dosen/" + id)
+				axios.get("/matakuliah/" + id)
 				.then(
 					response => {
 						this.id = response.data.item.id,
-						this.nik = response.data.item.nik,
-						this.pendidikan = response.data.item.pendidikan,
-						this.nama_dosen = response.data.item.nama_dosen,
-						this.alamat_dosen = response.data.item.alamat_dosen,
+						this.kode_matakuliah = response.data.item.kode_matakuliah,
+						this.nama_matakuliah = response.data.item.nama_matakuliah,
+						this.prodi_id = response.data.item.prodi_id,
+						this.dosen_id = response.data.item.dosen_id,
 						this.validated = true;
 					},  
 					)
@@ -142,11 +156,12 @@
 				});
 			},
 			editItem(id) {
-				axios.put("/api/dosen/" + id, {
-					nik: this.nik,
-					nama_dosen: this.nama_dosen,
-					pendidikan: this.pendidikan,
-					alamat_dosen: this.alamat_dosen
+				axios.put("/matakuliah/" + id, {
+					kode_matakuliah: this.kode_matakuliah,
+					nama_matakuliah: this.nama_matakuliah,
+					prodi_id: this.prodi_id,
+					dosen_id: this.dosen_id
+					
 				})
 				.then(
 					(response => {
@@ -157,38 +172,37 @@
 						this.validated = false;
 						this.tambah = false;
 						this.hapus = false;
-						this.fail = false;
 						this.ubah = true;
 					})
 					)
 				.catch(
 					(error) => {console.log(error),
-						this.er = error.response.data.errors;	
+						this.er = error.response.data.errors;
 					});
 			},
 			removeItem(id) {
 				const confirmBox = confirm("Anda yakin ingin menghapus?")
 				if(confirmBox)
-					axios.delete("/api/dosen/" + id)
+					axios.delete("/matakuliah/" + id)
 				.then(
 					(response => {
 						this.getItem(),
 						this.tambah = false;
 						this.ubah = false;
-						this.fail = false;
 						this.hapus = true;
 					})
 					)
 				.catch(
-					(error) => this.fail = true
+					(error) => console.log(error)
 					);
 			},
 			addItem() {
-				axios.post("/api/dosen", {
-					nik: this.nik,
-					nama_dosen: this.nama_dosen,
-					pendidikan: this.pendidikan,
-					alamat_dosen: this.alamat_dosen
+				axios.post("/matakuliah", {
+					kode_matakuliah: this.kode_matakuliah,
+					nama_matakuliah: this.nama_matakuliah,
+					prodi_id: this.prodi_id,
+					dosen_id: this.dosen_id
+
 				})
 				.then(
 					(response => {
@@ -197,7 +211,6 @@
 						this.getItem(),
 						this.ubah = false;
 						this.hapus = false;
-						this.fail = false;
 						this.tambah = true;
 					})
 					)

@@ -118,7 +118,7 @@
 				this.edit = false
 			},
 			getItem() {
-				axios.get("/api/mahasiswa")
+				axios.get("/mahasiswa")
 				.then(
 					response => {this.results = response.data.item, this.r = response.data.item2},  
 					)
@@ -128,7 +128,7 @@
 			},
 			showItem(id) {
 				this.edit = true
-				axios.get("/api/mahasiswa/" + id)
+				axios.get("/mahasiswa/" + id)
 				.then(
 					response => {
 						this.id = response.data.item.id,
@@ -144,7 +144,7 @@
 				});
 			},
 			editItem(id) {
-				axios.put("/api/mahasiswa/" + id, {
+				axios.put("/mahasiswa/" + id, {
 					nim: this.nim,
 					nama_mahasiswa: this.nama_mahasiswa,
 					prodi_id: this.prodi_id,
@@ -170,7 +170,7 @@
 			removeItem(id) {
 				const confirmBox = confirm("Anda yakin ingin menghapus?")
 				if(confirmBox)
-					axios.delete("/api/mahasiswa/" + id)
+					axios.delete("/mahasiswa/" + id)
 				.then(
 					(response => {
 						this.getItem(),
@@ -184,7 +184,7 @@
 					);
 			},
 			addItem() {
-				axios.post("/api/mahasiswa", {
+				axios.post("/mahasiswa", {
 					nim: this.nim,
 					nama_mahasiswa: this.nama_mahasiswa,
 					prodi_id: this.prodi_id,

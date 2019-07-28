@@ -15,22 +15,39 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('login', function() {
-    $tes = request()->only('email', 'password');
 
-    if (auth()->once($tes)){
-    	return auth()->user();
-    }
-    return 'fail';
-});
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('/mahasiswa', 'MahasiswaController');
-Route::resource('/matakuliah', 'MatakuliahController');
-Route::resource('/dosen', 'DosenController');
-Route::resource('/prodi', 'ProdiController');
 
 
+Route::prefix('v1')->group(function () {
+    Route::prefix('auth')->group(function () {
+        // Below mention routes are public, user can access those without any restriction.
+     
+        // Login User
+        Route::post('login', 'AuthController@login');
+        
+        // Refresh the JWT Token
+        Route::get('refresh', 'AuthController@refresh');
+
+        Route::resource('vmahasiswa', 'MahasiswaController');
+        Route::resource('vmatakuliah', 'MatakuliahController');
+        Route::resource('vdosen', 'DosenController');
+        Route::resource('vprodi', 'ProdiController');
+        
+        // Below mention routes are available only for the authenticated users.
+        Route::middleware('auth:api')->group(function () {
+          
+            // Logout user from application
+            Route::post('logout', 'AuthController@logout');
+
+        });
+    });
+    Route::resource('mahasiswa', 'MahasiswaController');
+    Route::resource('matakuliah', 'MatakuliahController');
+    Route::resource('dosen', 'DosenController');
+    Route::resource('prodi', 'ProdiController');
+});

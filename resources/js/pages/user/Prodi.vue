@@ -98,7 +98,7 @@
 				this.edit = false
 			},
 			getItem() {
-				axios.get("/api/prodi")
+				axios.get("/prodi")
 				.then(
 					response => {this.results = response.data.item},  
 					)
@@ -108,7 +108,7 @@
 			},
 			showItem(id) {
 				this.edit = true
-				axios.get("/api/prodi/" + id)
+				axios.get("/prodi/" + id)
 				.then(
 					response => {
 						this.id = response.data.item.id,
@@ -122,7 +122,7 @@
 				});
 			},
 			editItem(id) {
-				axios.put("/api/prodi/" + id, {
+				axios.put("/prodi/" + id, {
 					nama_prodi: this.nama_prodi,
 					akreditas: this.akreditas
 				})
@@ -147,7 +147,7 @@
 			removeItem(id) {
 				const confirmBox = confirm("Anda yakin ingin menghapus?")
 				if(confirmBox)
-					axios.delete("/api/prodi/" + id)
+					axios.delete("/prodi/" + id)
 				.then(
 					(response => {
 						this.getItem(),
@@ -162,7 +162,7 @@
 					);
 			},
 			addItem() {
-				axios.post("/api/prodi", {
+				axios.post("/prodi", {
 					nama_prodi: this.nama_prodi,
 					akreditas: this.akreditas
 				})
